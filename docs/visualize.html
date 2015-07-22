@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>visualize.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>visualize.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/* 
+* @Author: kuychaco
+* @Date:   2015-07-12 12:34:43
+* @Last Modified by:   kuychaco
+* @Last Modified time: 2015-07-12 12:53:22
+*/</span>
+<span class="hljs-pi">
+'use strict'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>D3 code for tree visualization</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> width = <span class="hljs-number">960</span>,
+    height = <span class="hljs-number">800</span>;
+
+<span class="hljs-keyword">var</span> tree = d3.layout.tree()
+    .size([width - <span class="hljs-number">100</span>, height - <span class="hljs-number">100</span>]);
+
+<span class="hljs-keyword">var</span> root = {},
+    nodes = tree(root);
+
+root.parent = root;
+root.px = root.x;
+root.py = root.y;
+
+<span class="hljs-keyword">var</span> diagonal = d3.svg.diagonal();
+
+<span class="hljs-keyword">var</span> svg = d3.select(<span class="hljs-string">"body"</span>).append(<span class="hljs-string">"svg"</span>)
+    .attr(<span class="hljs-string">"width"</span>, width)
+    .attr(<span class="hljs-string">"height"</span>, height)
+  .append(<span class="hljs-string">"g"</span>)
+    .attr(<span class="hljs-string">"transform"</span>, <span class="hljs-string">"translate(10,30)"</span>);
+
+<span class="hljs-keyword">var</span> initialNode = svg.selectAll(<span class="hljs-string">".node"</span>),
+    node = initialNode,
+    link = svg.selectAll(<span class="hljs-string">".link"</span>);
+
+<span class="hljs-keyword">var</span> duration = <span class="hljs-number">0.75</span>*stepDelay;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Restore to initial state</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> restoreInitial = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Reset root and nodes to initial state</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  root = {};
+  nodes = tree(root);
+  root.parent = root;
+  root.px = root.x;
+  root.py = root.y;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Remove node from DOM</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  animateSwap();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Reset node to initial state</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  node = initialNode;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Update the array of nodes for the d3 tree layout based on adding nodes during Heap methods</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> insertNode = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+  
+  <span class="hljs-keyword">if</span> (nodes[<span class="hljs-number">0</span>].value === <span class="hljs-literal">undefined</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>If first value is added to heap, modify root node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    nodes[<span class="hljs-number">0</span>].value = value;
+    nodes[<span class="hljs-number">0</span>].id = <span class="hljs-number">0</span>;
+  } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Add a new node to its parent in the heap.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> n = {id: nodes.length, value: value},
+        p = nodes[<span class="hljs-built_in">Math</span>.ceil((nodes.length-<span class="hljs-number">2</span>)/<span class="hljs-number">2</span>)];
+    <span class="hljs-keyword">if</span> (p.children) p.children.push(n); <span class="hljs-keyword">else</span> p.children = [n];
+    nodes.push(n);
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Recompute the layout and data join.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  node = node.data(tree.nodes(root), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.id; });
+  link = link.data(tree.links(nodes), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.source.id + <span class="hljs-string">"-"</span> + d.target.id; });
+
+  <span class="hljs-keyword">var</span> nodeEnter = node.enter().append(<span class="hljs-string">'g'</span>)
+      .attr(<span class="hljs-string">'class'</span>, <span class="hljs-string">'node'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Add entering nodes in the parent’s old position.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  nodeEnter.append(<span class="hljs-string">"circle"</span>)
+      .attr(<span class="hljs-string">"r"</span>, <span class="hljs-number">20</span>)
+      .attr(<span class="hljs-string">"cx"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.parent.px; })
+      .attr(<span class="hljs-string">"cy"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.parent.py; });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Add text to entering nodes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  nodeEnter.append(<span class="hljs-string">'text'</span>)
+      .attr(<span class="hljs-string">"x"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.parent.px; })
+      .attr(<span class="hljs-string">"y"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.parent.py; })
+      .attr(<span class="hljs-string">'text-anchor'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{
+        <span class="hljs-keyword">return</span> d.children || d._children ? <span class="hljs-string">'end'</span> : <span class="hljs-string">'start'</span>; })
+      .text(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.value; })
+      .style(<span class="hljs-string">'fill-opacity'</span>, <span class="hljs-number">1</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Add entering links in the parent’s old position.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  link.enter().insert(<span class="hljs-string">"path"</span>, <span class="hljs-string">".node"</span>)
+      .attr(<span class="hljs-string">"class"</span>, <span class="hljs-string">"link"</span>)
+      .attr(<span class="hljs-string">"d"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{
+        <span class="hljs-keyword">var</span> o = {x: d.source.px, y: d.source.py};
+        <span class="hljs-keyword">return</span> diagonal({source: o, target: o});
+      });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Transition nodes and links to their new positions.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> t = svg.transition()
+      .duration(duration);
+
+  t.selectAll(<span class="hljs-string">".link"</span>)
+      .attr(<span class="hljs-string">"d"</span>, diagonal);
+
+  t.selectAll(<span class="hljs-string">"circle"</span>)
+      .attr(<span class="hljs-string">"cx"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.px = d.x; })
+      .attr(<span class="hljs-string">"cy"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.py = d.y; });
+
+  t.selectAll(<span class="hljs-string">"text"</span>)
+      .attr(<span class="hljs-string">"x"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.px = d.x; })
+      .attr(<span class="hljs-string">"y"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.py = d.y; });
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Update the array of nodes for the d3 tree layout based on swapping during Heap methods</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> swapNodes = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(index, parentInd)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Update nodes array
+Find nodes at index and parentInd</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> current = nodes[index];
+  <span class="hljs-keyword">var</span> parent = nodes[parentInd];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Swap the x,y coordinates between node at index and node at parentInd</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  current.x = current.x ^ parent.x;
+  parent.x = current.x ^ parent.x;
+  current.x = current.x ^ parent.x;
+
+  current.px = current.px ^ parent.px;
+  parent.px = current.px ^ parent.px;
+  current.px = current.px ^ parent.px;
+
+  current.y = current.y ^ parent.y;
+  parent.y = current.y ^ parent.y;
+  current.y = current.y ^ parent.y;
+
+  current.py = current.py ^ parent.py;
+  parent.py = current.py ^ parent.py;
+  current.py = current.py ^ parent.py;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Swap the depth between node at index and node at parentInd</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  current.depth = current.depth ^ parent.depth;
+  parent.depth = current.depth ^ parent.depth;
+  current.depth = current.depth ^ parent.depth;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Reassign children
+Store non-index node child of parent (if it has one)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  parent.children = parent.children || [];
+  <span class="hljs-keyword">var</span> parentOrphan = parent.children.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> </span>{
+    <span class="hljs-keyword">return</span> child.id !== current.id;
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Store current children for assigning correct parent</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> currentOrphans = current.children || [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Assign parentInd node the children of index node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  parent.children = current.children;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Assign parentInd node and its child (that isn’t the index node) as the child of index node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  current.children = [parent].concat(parentOrphan);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>For grandParent’s children, overwrite parent with current</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  parent.parent.children = parent.parent.children || [];
+  parent.parent.children.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child, i, children)</span> </span>{
+    <span class="hljs-keyword">if</span> (child.id === parent.id) {
+      children[i] = current;
+    }
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Reassign parents
+Assign parent of parentInd node as parent of index node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  current.parent = parent.parent === parent ? current : parent.parent;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Assign index node as the parent of parentInd node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  parent.parent = current;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Assign parent of parentOrphan node as index node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  parentOrphan.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> </span>{
+    child.parent = current;
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Assign parent of currentOrphans as parent node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  currentOrphans.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> </span>{
+    child.parent = parent;
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Swap actual nodes in nodes array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> temp = nodes[index];
+  nodes[index] = nodes[parentInd];
+  nodes[parentInd] = temp;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>Update root if one of the swapped nodes was at index zero of the nodes array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (index === <span class="hljs-number">0</span> || parentInd === <span class="hljs-number">0</span>) {
+    root = nodes[<span class="hljs-number">0</span>];
+    root.parent = root;
+    root.px = root.x;
+    root.py = root.y;
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Animate the swapping of the nodes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  animateSwap();
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>For removeMax move last node to root</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> swapRoot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>Take last node and make root (put in nodes[0])</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> newRoot = nodes.pop();
+  <span class="hljs-keyword">var</span> oldRoot = nodes[<span class="hljs-number">0</span>];
+  nodes[<span class="hljs-number">0</span>] = newRoot;
+  root = newRoot;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Update x,y,px,py,depth</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  newRoot.x = oldRoot.x;
+  newRoot.y = oldRoot.y;
+  newRoot.px = oldRoot.px;
+  newRoot.py = oldRoot.xpy
+  newRoot.depth = oldRoot.depth;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>Update parents and children for new root</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  oldRoot.children.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> </span>{
+    child.parent = newRoot;
+  });
+  newRoot.children = oldRoot.children;
+  newRoot.parent.children = newRoot.parent.children.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> </span>{
+    <span class="hljs-keyword">return</span> child.id !== newRoot.id;
+  });
+  newRoot.parent = newRoot;
+  newRoot.px = newRoot.x;
+  newRoot.py = newRoot.y;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Animate</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  animateSwap();
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>Perform animation of swapping of nodes and re-establishing links between swapped nodes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> animateSwap = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>remove exit nodes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  node = node.data(tree.nodes(root), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.id; });
+  node.exit().remove();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>Recompute links between nodes post swapping</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  link = link.data(tree.links(nodes), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.source.id + <span class="hljs-string">"-"</span> + d.target.id; });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>Add entering links</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  link.enter().insert(<span class="hljs-string">"path"</span>, <span class="hljs-string">".node"</span>)
+      .attr(<span class="hljs-string">"class"</span>, <span class="hljs-string">"link"</span>)
+      .attr(<span class="hljs-string">"d"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{
+        <span class="hljs-keyword">var</span> o = {x: d.source.px, y: d.source.py};
+        <span class="hljs-keyword">return</span> diagonal({source: o, target: o});
+      });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>Remove exit links</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  link.exit().remove();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Transition nodes and links to new positions</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> t = svg.transition()
+      .duration(duration);
+
+  t.selectAll(<span class="hljs-string">".link"</span>)
+      .attr(<span class="hljs-string">"d"</span>, diagonal);
+
+  t.selectAll(<span class="hljs-string">"circle"</span>)
+      .attr(<span class="hljs-string">"cx"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.px = d.x; })
+      .attr(<span class="hljs-string">"cy"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.py = d.y; });
+
+  t.selectAll(<span class="hljs-string">"text"</span>)
+      .attr(<span class="hljs-string">"x"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.px = d.x; })
+      .attr(<span class="hljs-string">"y"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span> </span>{ <span class="hljs-keyword">return</span> d.py = d.y; });
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
