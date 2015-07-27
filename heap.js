@@ -131,4 +131,3 @@ Heap.prototype.removeMax = function() {
 
 // Instantiate heap
 var heap = new Heap();
-
